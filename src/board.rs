@@ -57,9 +57,44 @@ impl Cell {
     }
 }
 
-pub struct Point {
-    x: usize,
-    y: usize,
+#[derive(Copy, Clone, Debug)]
+pub struct Point<T> {
+    pub x: T,
+    pub y: T,
+}
+
+impl Add for Point<i32> {
+    type Output = Option<Point<usize>>;
+
+    fn add(self, other: Point<i32>) -> Self::Output {
+        let x = self.x + other.x;
+        let y = self.y + other.y;
+        if x < 0 || x > 8 || y < 0 || y > 8 {
+            return None;
+        }
+        let p = Point {
+            x: x as usize,
+            y: y as usize,
+        };
+        Some(p)
+    }
+}
+
+impl Add<Point<i32>> for Point<usize> {
+    type Output = Option<Point<usize>>;
+
+    fn add(self, other: Point<i32>) -> Self::Output {
+        let x = self.x as i32 + other.x;
+        let y = self.y as i32 + other.y;
+        if x < 0 || x > 7 || y < 0 || y > 7 {
+            return None;
+        }
+        let p = Point {
+            x: x as usize,
+            y: y as usize,
+        };
+        Some(p)
+    }
 }
 
 pub struct Board {
