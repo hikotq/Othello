@@ -129,18 +129,43 @@ impl Move {
 }
 
 impl Board {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Board {
             cell_table: [self::Cell::Empty; 64],
         }
     }
 
-    pub fn get_cell(&self, m: Move) -> Cell {
-        self.cell_table[m.y * 8 + m.x]
+    pub fn all_points() -> Vec<Point<usize>> {
+        let mut v = Vec::new();
+        for y in 0..8 {
+            for x in 0..8 {
+                v.push(Point { x, y });
+            }
+        }
+        v
     }
 
-    pub fn set_cell(&mut self, m: Move) {
+    pub fn get_cell(&self, p: Point<usize>) -> Cell {
+        self.cell_table[p.y * 8 + p.x]
+    }
+
+    pub fn set_cell(&mut self, p: Point<usize>, cell: Cell) {
         use self::Cell;
-        self.cell_table[m.y * 8 + m.x] = Cell::Piece(m.color);
+        self.cell_table[p.y * 8 + p.x] = cell;
+    }
+
+    pub fn show(&self) {
+        for y in 0..8 {
+            for x in 0..8 {
+                let s = match self.get_cell(Point { x, y }) {
+                    Cell::Piece(Color::Black) => "○",
+                    Cell::Piece(Color::White) => "●",
+                    Cell::Empty => "□",
+                    Cell::Available => "×",
+                };
+                print!("{}", s);
+            }
+            println!("");
+        }
     }
 }
