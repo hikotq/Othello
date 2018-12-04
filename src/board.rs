@@ -104,9 +104,9 @@ pub struct Board {
 
 #[derive(Copy, Clone, Debug)]
 pub struct Move {
-    x: usize,
-    y: usize,
-    color: Color,
+    pub x: usize,
+    pub y: usize,
+    pub color: Color,
 }
 
 impl Move {
