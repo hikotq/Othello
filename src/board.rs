@@ -1,10 +1,30 @@
-#[derive(Clone, Copy)]
+use std::fmt;
+use std::ops::Add;
+
+#[derive(Clone, Copy, Debug)]
 pub enum Color {
     Black,
     White,
 }
 
-#[derive(Clone, Copy)]
+impl Color {
+    pub fn equal(color1: &Color, color2: &Color) -> bool {
+        !(color1.is_black() ^ color2.is_black())
+    }
+
+    pub fn is_black(&self) -> bool {
+        use self::Color;
+        match *self {
+            Color::Black => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_white(&self) -> bool {
+        !self.is_black()
+    }
+}
+
 pub enum Cell {
     Empty,
     Available,
