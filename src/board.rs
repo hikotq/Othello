@@ -25,6 +25,7 @@ impl Color {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
 pub enum Cell {
     Empty,
     Available,
@@ -101,7 +102,7 @@ pub struct Board {
     cell_table: [Cell; 64],
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Move {
     x: usize,
     y: usize,
