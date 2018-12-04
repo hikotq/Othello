@@ -102,6 +102,12 @@ pub struct Board {
     cell_table: [Cell; 64],
 }
 
+impl fmt::Debug for Board {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        self.cell_table[..].fmt(formatter)
+    }
+}
+
 #[derive(Copy, Clone, Debug)]
 pub struct Move {
     pub x: usize,
