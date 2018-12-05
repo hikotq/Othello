@@ -44,39 +44,42 @@ impl Game {
             .filter(|&p| !self.board.get_cell(p).is_piece())
             .collect::<Vec<Pos<usize>>>()
         {
-            if let Cell::Piece(color) = self.board.get_cell(point) {
-                if !Color::equal(&self.turn, &color) {
-                    break;
+            if Rule::can_put(&self.board, pos, self.turn) {
+                self.board.set_cell(pos, Cell::Available);
+            } else if self.board.get_cell(pos).is_available() {
+                self.board.set_cell(pos, Cell::Empty);
+            }
+        }
+    }
+
+    pub fn flip(&mut self, pos: Pos<usize>) {
+        for d in &self.board.dir.clone() {
+            let p = pos + *d;
+            if p.is_none() {
+                continue;
+            }
+            if let Cell::Piece(color) = self.board.get_cell(p.unwrap()) {
+                if Color::equal(&self.turn, &color) {
+                    continue;
                 }
             }
-            for d in self.dir.iter() {
-                let mut dir_p = point + *d;
-                match dir_p {
-                    Some(p) => {
-                        match self.board.get_cell(p) {
-                            Cell::Piece(color) => {
-                                if Color::equal(&self.turn, &color) {
-                                    continue;
-                                }
-                            }
-                            _ => continue,
-                        }
-                        dir_p = p + *d;
+            self.flip_recursive(p, *d).ok();
+        }
+    }
+
+    pub fn flip_recursive(&mut self, pos: Option<Pos<usize>>, d: Pos<i32>) -> Result<(), String> {
+        if let Some(pos) = pos {
+            if let Cell::Piece(color) = self.board.get_cell(pos) {
+                if Color::equal(&self.turn, &color) {
+                    return Ok(());
+                } else {
+                    if self.flip_recursive(pos + d, d).is_ok() {
+                        self.board.set_cell(pos, Cell::Piece(self.turn));
+                        return Ok(());
                     }
-                    _ => continue,
-                }
-                while let Some(p) = dir_p {
-                    if let Cell::Piece(color) = self.board.get_cell(p) {
-                        if Color::equal(&self.turn, &color) {
-                            self.board.set_cell(point, Cell::Available);
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
-                    dir_p = p + *d;
                 }
             }
         }
+        Err("out of board".to_string())
     }
 }
