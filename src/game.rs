@@ -1,10 +1,10 @@
 use crate::board::{Board, Cell, Color, Move, Pos};
+use crate::rule::Rule;
 
 #[derive(Debug)]
 pub struct Game {
     pub board: Board,
-    turn: Color,
-    dir: Vec<Point<i32>>,
+    pub turn: Color,
 }
 
 impl Game {
@@ -15,25 +15,9 @@ impl Game {
         board.set_cell(Pos { x: 3, y: 4 }, Cell::Piece(Color::White));
         board.set_cell(Pos { x: 4, y: 3 }, Cell::Piece(Color::White));
 
-        let dir_v = vec![
-            (1, 0),
-            (1, 1),
-            (0, 1),
-            (-1, 1),
-            (-1, 0),
-            (-1, -1),
-            (0, -1),
-            (1, -1),
-        ];
-        let dir_v = dir_v
-            .into_iter()
-            .map(|(x, y)| Point { x, y })
-            .collect::<Vec<Point<i32>>>();
-        let mut dir = [Point { x: 0, y: 0 }; 8];
         Self {
             board: board,
             turn: Color::Black,
-            dir: dir_v,
         }
     }
 
