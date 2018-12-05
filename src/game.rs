@@ -37,6 +37,13 @@ impl Game {
         }
     }
 
+    fn change_turn(&mut self) {
+        self.turn = match self.turn {
+            Color::Black => Color::White,
+            _ => Color::Black,
+        }
+    }
+
     fn put_piece(&mut self, m: Move) -> Result<(), String> {
         if !self.board.get_cell(Point { x: m.x, y: m.y }).is_available() {
             return Err("Not Available Cell".to_string());
