@@ -1,4 +1,4 @@
-use crate::board::{Board, Cell, Color, Move, Point};
+use crate::board::{Board, Cell, Color, Move, Pos};
 
 #[derive(Debug)]
 pub struct Game {
@@ -10,10 +10,10 @@ pub struct Game {
 impl Game {
     pub fn new() -> Self {
         let mut board = Board::new();
-        board.set_cell(Point { x: 3, y: 3 }, Cell::Piece(Color::Black));
-        board.set_cell(Point { x: 4, y: 4 }, Cell::Piece(Color::Black));
-        board.set_cell(Point { x: 3, y: 4 }, Cell::Piece(Color::White));
-        board.set_cell(Point { x: 4, y: 3 }, Cell::Piece(Color::White));
+        board.set_cell(Pos { x: 3, y: 3 }, Cell::Piece(Color::Black));
+        board.set_cell(Pos { x: 4, y: 4 }, Cell::Piece(Color::Black));
+        board.set_cell(Pos { x: 3, y: 4 }, Cell::Piece(Color::White));
+        board.set_cell(Pos { x: 4, y: 3 }, Cell::Piece(Color::White));
 
         let dir_v = vec![
             (1, 0),
@@ -44,20 +44,21 @@ impl Game {
         }
     }
 
-    fn put_piece(&mut self, m: Move) -> Result<(), String> {
-        if !self.board.get_cell(Point { x: m.x, y: m.y }).is_available() {
+    pub fn put_piece(&mut self, m: Move) -> Result<(), String> {
+        if !self.board.get_cell(Pos { x: m.x, y: m.y }).is_available() {
             return Err("Not Available Cell".to_string());
         }
-        Ok(self
-            .board
-            .set_cell(Point { x: m.x, y: m.y }, Cell::Piece(m.color)))
+        let pos = Pos { x: m.x, y: m.y };
+        self.board.set_cell(pos, Cell::Piece(m.color));
+        self.flip(pos);
+        Ok(())
     }
 
     pub fn update_available_cell(&mut self) {
-        for point in Board::all_points()
+        for pos in Board::all_pos()
             .into_iter()
             .filter(|&p| !self.board.get_cell(p).is_piece())
-            .collect::<Vec<Point<usize>>>()
+            .collect::<Vec<Pos<usize>>>()
         {
             if let Cell::Piece(color) = self.board.get_cell(point) {
                 if !Color::equal(&self.turn, &color) {
