@@ -21,7 +21,7 @@ impl Game {
         }
     }
 
-    fn change_turn(&mut self) {
+    pub fn change_turn(&mut self) {
         self.turn = match self.turn {
             Color::Black => Color::White,
             _ => Color::Black,
