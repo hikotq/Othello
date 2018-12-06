@@ -172,6 +172,10 @@ impl Board {
         })
     }
 
+    pub fn has_available_cell(&self) -> bool {
+        self.cell_table.contains(&Cell::Available)
+    }
+
     pub fn show(&self) {
         for y in 0..8 {
             for x in 0..8 {
