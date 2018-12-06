@@ -1,7 +1,7 @@
 use std::fmt;
 use std::ops::Add;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Eq, PartialEq, Debug)]
 pub enum Color {
     Black,
     White,
@@ -25,7 +25,7 @@ impl Color {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Eq, PartialEq, Debug)]
 pub enum Cell {
     Empty,
     Available,
@@ -98,17 +98,6 @@ impl Add<Pos<i32>> for Pos<usize> {
     }
 }
 
-pub struct Board {
-    cell_table: [Cell; 64],
-    pub dir: [Pos<i32>; 8],
-}
-
-impl fmt::Debug for Board {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        self.cell_table[..].fmt(formatter)
-    }
-}
-
 #[derive(Copy, Clone, Debug)]
 pub struct Move {
     pub x: usize,
@@ -126,6 +115,17 @@ impl Move {
             y: y as usize,
             color,
         })
+    }
+}
+
+pub struct Board {
+    cell_table: [Cell; 64],
+    pub dir: [Pos<i32>; 8],
+}
+
+impl fmt::Debug for Board {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        self.cell_table[..].fmt(formatter)
     }
 }
 
@@ -161,8 +161,19 @@ impl Board {
     }
 
     pub fn set_cell(&mut self, p: Pos<usize>, cell: Cell) {
-        use self::Cell;
         self.cell_table[p.y * 8 + p.x] = cell;
+    }
+
+    pub fn count_piece(&self) -> (usize, usize) {
+        self.cell_table.iter().fold((0, 0), |acc, x| match x {
+            Cell::Piece(color) if color.is_black() => (acc.0 + 1, acc.1),
+            Cell::Piece(color) => (acc.0, acc.1 + 1),
+            _ => acc,
+        })
+    }
+
+    pub fn has_available_cell(&self) -> bool {
+        self.cell_table.contains(&Cell::Available)
     }
 
     pub fn show(&self) {

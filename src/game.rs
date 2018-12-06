@@ -1,10 +1,12 @@
 use crate::board::{Board, Cell, Color, Move, Pos};
-use crate::rule::Rule;
+
+type Winner = Option<Color>;
 
 #[derive(Debug)]
 pub struct Game {
     pub board: Board,
     pub turn: Color,
+    pub is_over: bool,
 }
 
 impl Game {
@@ -18,6 +20,7 @@ impl Game {
         Self {
             board: board,
             turn: Color::Black,
+            is_over: false,
         }
     }
 
@@ -25,6 +28,17 @@ impl Game {
         self.turn = match self.turn {
             Color::Black => Color::White,
             _ => Color::Black,
+        }
+    }
+
+    pub fn winner(&self) -> Winner {
+        let (black, white) = self.board.count_piece();
+        if black > white {
+            Some(Color::Black)
+        } else if white > black {
+            Some(Color::White)
+        } else {
+            None
         }
     }
 
