@@ -161,7 +161,6 @@ impl Board {
     }
 
     pub fn set_cell(&mut self, p: Pos<usize>, cell: Cell) {
-        use self::Cell;
         self.cell_table[p.y * 8 + p.x] = cell;
     }
 
