@@ -44,12 +44,42 @@ impl Game {
             .filter(|&p| !self.board.get_cell(p).is_piece())
             .collect::<Vec<Pos<usize>>>()
         {
-            if Rule::can_put(&self.board, pos, self.turn) {
+            if self.can_put(pos, self.turn) {
                 self.board.set_cell(pos, Cell::Available);
             } else if self.board.get_cell(pos).is_available() {
                 self.board.set_cell(pos, Cell::Empty);
             }
         }
+    }
+
+    pub fn can_put(&self, pos: Pos<usize>, turn: Color) -> bool {
+        for d in self.board.dir.iter() {
+            let mut dir_p = pos + *d;
+            if let Some(p) = dir_p {
+                match self.board.get_cell(p) {
+                    Cell::Piece(color) => {
+                        if Color::equal(&turn, &color) {
+                            continue;
+                        }
+                    }
+                    _ => continue,
+                }
+                dir_p = p + *d;
+            } else {
+                continue;
+            }
+            while let Some(p) = dir_p {
+                if let Cell::Piece(color) = self.board.get_cell(p) {
+                    if Color::equal(&turn, &color) {
+                        return true;
+                    }
+                } else {
+                    break;
+                }
+                dir_p = p + *d;
+            }
+        }
+        false
     }
 
     pub fn flip(&mut self, pos: Pos<usize>) {
